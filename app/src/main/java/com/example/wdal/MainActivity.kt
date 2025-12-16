@@ -73,14 +73,6 @@ class AuthViewModel {
                 isLoggedIn.value = false
             }
         }
-        suspend fun logout() {
-            try {
-                supabase.auth.signOut()
-                isLoggedIn.value = false
-                currentUserEmail.value = ""
-            } catch (e: Exception) {
-            }
-        }
     }
 }
 
@@ -546,24 +538,6 @@ fun RegistrationScreen(navController: NavHostController) {
                                     email = userEmail
                                     password = userPassword
                                 }
-
-                                val newUser = LoginData(
-                                    name = firstName,
-                                    familki = lastName,
-                                    email = userEmail
-                                )
-
-                                try {
-                                    supabase.from("logins")
-                                        .insert(newUser)
-                                } catch (e: Exception) {
-                                }
-
-                                launch(Dispatchers.Main) {
-                                    navController.navigate("login") {
-                                        popUpTo("registration") { inclusive = true }
-                                    }
-                                }
                             } catch (e: Exception) {
                                 errorMessage = "Ошибка регистрации: ${e.message}"
                             } finally {
@@ -620,32 +594,6 @@ fun MainScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(Color(0xFF332973))
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .background(Color(0xFF332973))
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            IconButton(
-                onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        AuthViewModel.logout()
-                        navController.navigate("login") {
-                            popUpTo("main") { inclusive = true }
-                        }
-                    }
-                }
-            ) {
-                Text(
-                    text = "Выйти",
-                    color = Color(0xFFEF3A01),
-                    fontSize = 16.sp
-                )
-            }
-        }
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
